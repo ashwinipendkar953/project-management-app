@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+" rel="stylesheet" type="text/css" />
+
+  <style>
+    #success {
+      display: none;
+      color: green
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <header>
+    <nav class="navbar navbar-expand-lg text-secondary bg-light fw-semibold px-5">
+      <div class="container-fluid d-flex">
+        <a class="navbar-brand" href="index.html">Project Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+          aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="projects.html">Project List</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="add-project.html">Add Project</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container mt-3">
+      <h1>Add Project Details</h1>
+
+      <form id="addProjectDetailsForm" class="my-3">
+        <div class="my-4">
+          <label for="projectName">Project Name:</label>
+          <input class="form-control my-2" id="projectName">
+        </div>
+
+        <div class="my-4">
+          <label for="projectManagerName">Project Manager Name:</label>
+          <input class="form-control my-2" id="projectManagerName">
+        </div>
+
+        <div class="my-4">
+          <label for="managerContact">Manager Contact:</label>
+          <input type="number" class="form-control my-2" id="managerContact">
+        </div>
+
+        <div class="my-4">
+          <label for="projectStartDate">Project Start Date:</label>
+          <input type="date" class="form-control my-2" id="projectStartDate">
+        </div>
+
+        <div class="my-4">
+          <label for="projectEndDate">Project End Date:</label>
+          <input type="date" class="form-control my-2" id="projectEndDate">
+        </div>
+
+        <div class="my-4">
+          <label for="projectDescription">Project Description:</label>
+          <textarea class="form-control my-2" id="projectDescription" rows="6"></textarea>
+        </div>
+
+        <div class="my-4">
+          <label for="clientName">Client Name:</label>
+          <input class="form-control my-2" id="clientName">
+        </div>
+
+        <div class="my-4">
+          <label for="clientContactNumber">Client Contact Number:</label>
+          <input type="number" class="form-control my-2" id="clientContactNumber">
+        </div>
+
+        <div class="my-4">
+          <label for="projectBudget">Project Budget:</label>
+          <input type="number" class="form-control my-2" id="projectBudget">
+        </div>
+
+        <div class="my-4">
+          <label for="projectStatus">Project Status:</label>
+          <select class="form-select my-3" id="projectStatus">
+            <option value="In Progress" selected>In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Not Started">Not Started</option>
+          </select>
+        </div>
+
+        <button class="btn btn-primary my-2" type="submit">
+          Add Project
+        </button>
+
+      </form>
+
+      <div class="my-3" id="success">Project details added successfully.</div>
+
+      <div class="my-3" id="error"></div>
+    </div>
+  </main>
+
+  <script>
+
+    const addProjectDetailsForm = document.querySelector("#addProjectDetailsForm")
+    const projectName = document.querySelector("#projectName")
+    const projectManagerName = document.querySelector("#projectManagerName")
+    const managerContact = document.querySelector("#managerContact")
+    const projectStartDate = document.querySelector("#projectStartDate")
+    const projectEndDate = document.querySelector("#projectEndDate")
+    const projectDescription = document.querySelector("#projectDescription")
+    const clientName = document.querySelector("#clientName")
+    const clientContactNumber = document.querySelector("#clientContactNumber")
+    const projectBudget = document.querySelector("#projectBudget")
+    const projectStatus = document.querySelector("#projectStatus")
+    const successContainer = document.querySelector("#success")
+    const errorContainer = document.querySelector("#error")
+
+
+    const apiUrl = "https://project-management-backend-student-neog-ca.replit.app/project"
+
+    addProjectDetailsForm.addEventListener("submit", function (event) {
+      event.preventDefault()
+      successContainer.style.display = "none"
+
+      const projectData = {
+        projectName: projectName.value,
+        projectManagerName: projectManagerName.value,
+        managerContact: managerContact.value,
+        projectStartDate: projectStartDate.value,
+        projectEndDate: projectEndDate.value,
+        projectDescription: projectDescription.value,
+        clientName: clientName.value,
+        clientContactNumber: clientContactNumber.value,
+        projectBudget: projectBudget.value,
+        projectStatus: projectStatus.value
+      }
+
+      fetch(apiUrl, {
+        method: "POST",
+        body: JSON.stringify(projectData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((res) => res.json())
+        .then((data) => {
+          successContainer.style.display = "block"
+        }).catch((error) => {
+          successContainer.style.display = "none"
+          errorContainer.textContent = error
+        })
+      addProjectDetailsForm.reset()
+    })
+
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js
+"></script>
+</body>
+
+</html>

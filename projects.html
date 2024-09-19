@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+" rel="stylesheet" type="text/css" />
+</head>
+
+<style>
+  #loading {
+    display: none;
+  }
+
+  #success {
+    display: none;
+  }
+</style>
+
+<body>
+
+  <header>
+    <nav class="navbar navbar-expand-lg text-secondary bg-light fw-semibold px-5">
+      <div class="container-fluid d-flex">
+        <a class="navbar-brand" href="index.html">Project Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+          aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="projects.html">Project List</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="add-project.html">Add Project</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container my-3">
+      <h1>Project List</h1>
+
+      <div class="alert alert-success my-2 py-2" id="success">Project deleted successfully.</div>
+      <div class="alert alert-info my-2 py-2" id="loading">Loading...</div>
+
+      <div class="my-3">
+        <label for="selectStatus">Filter by Project Status:</label>
+        <select id="selectStatus" class="form-select my-2">
+          <option value="All" selected>All</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+          <option value="Not Started">Not Started</option>
+        </select>
+      </div>
+
+      <ul class="list-group my-4" id="project-list"></ul>
+    </div>
+  </main>
+
+  <script>
+    const selectStatus = document.querySelector("#selectStatus")
+    const projectList = document.querySelector("#project-list")
+    const loadingContainer = document.querySelector("#loading")
+    const successContainer = document.querySelector("#success")
+
+    const apiUrl = "https://project-management-backend-student-neog-ca.replit.app/project"
+
+    function fetchData() {
+      loadingContainer.style.display = "block"
+
+      fetch(apiUrl).then((res) => res.json())
+        .then((data) => {
+          loadingContainer.style.display = "none"
+          if (data) {
+            const selectedStatus = selectStatus.value
+            if (selectedStatus !== "All") {
+              const filteredData = data.filter((project) => project.projectStatus === selectedStatus)
+              getList(filteredData)
+            } else {
+              getList(data)
+            }
+          }
+        })
+    }
+    fetchData()
+
+    function getList(data) {
+      projectList.textContent = ""
+      successContainer.style.display = "none"
+      for (let i = 0; i < data.length; i++) {
+        const listItem = document.createElement("li")
+        listItem.className = "list-group-item d-flex justify-content-between align-items-end"
+        listItem.innerHTML = `<div><strong>${data[i].projectName}</strong><br><strong>Project Status:</strong> ${data[i].projectStatus}<br><strong>Start Date:</strong> ${data[i].projectStartDate}<br><strong>End Date:</strong> ${data[i].projectEndDate}<br><strong>Budget:</strong> Rs. ${data[i].projectBudget}</div><button class="btn btn-danger" id="deleteBtn" data-id="${data[i]._id}">Delete</button>`
+
+        projectList.appendChild(listItem)
+      }
+      const deleteBtns = document.querySelectorAll("#deleteBtn")
+      for (let i = 0; i < deleteBtns.length; i++) {
+        deleteBtns[i].addEventListener("click", function (event) {
+          const projectId = event.target.getAttribute("data-id")
+          const apiDeleteUrl = `https://project-management-backend-student-neog-ca.replit.app/project/${projectId}`
+
+          fetch(apiDeleteUrl, {
+            method: "DELETE"
+          }).then((res) => res.json())
+            .then((data) => {
+              successContainer.style.display = "block"
+              fetchData()
+            })
+        })
+      }
+    }
+
+    selectStatus.addEventListener("change", fetchData)
+
+
+
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js
+"></script>
+</body>
+
+</html>
